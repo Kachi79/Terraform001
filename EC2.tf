@@ -1,12 +1,12 @@
 provider "aws" {
-    region = "eu-west-2"
+    region = var.region
     profile = "default"
 }
 
 resource "aws_instance" "demo_server" { 
-    ami = "ami-06464c878dbe46da4"
-    instance_type = "t2.medium"
-    key_name = "testkey"
+    ami = var.ami
+    instance_type = var.instance_type
+    key_name = var.key
     vpc_security_group_ids = [aws_security_group.terraform7707_sg.id]
   
 } 
@@ -37,8 +37,8 @@ resource "aws_security_group" "terraform7707_sg" {
 
 // creating  VPC 
 resource "aws_vpc" "terraform7707-vpc" {
-  cidr_block = "10.0.0.0/16"
-  
+  cidr_block = var.vpc_cidr_block
+
   tags = {
     Name = "terraform7707-vpc"
   }
@@ -47,8 +47,8 @@ resource "aws_vpc" "terraform7707-vpc" {
 // creating SUBNET
 resource "aws_subnet" "terraform7707-subnet" {
     vpc_id = aws_vpc.terraform7707-vpc.id 
-    cidr_block = "10.0.1.0/24"
-    availability_zone = "eu-west-2a"
+    cidr_block = var.subnet_cidr_block
+    availability_zone = var.availability_zone
     map_public_ip_on_launch = "true" 
   
    tags = {
@@ -70,7 +70,7 @@ resource "aws_route_table" "terraform7707-rt" {
   vpc_id = aws_vpc.terraform7707-vpc.id
 
   route {
-    cidr_block = "0.0.0.0/0"
+    cidr_block = var.route_cidr_block
     gateway_id = aws_internet_gateway.terraform7707-igw.id 
   }
    tags = {
